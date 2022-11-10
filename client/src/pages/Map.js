@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
-import mapboxgl from "mapbox-gl";
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import mapboxgl from "!mapbox-gl";
 import greenImage from "../assets/mapbox-marker-icon-20px-green.png";
 import grayImage from "../assets/mapbox-marker-icon-20px-red.png";
 import blueImage from "../assets/mapbox-marker-icon-20px-blue.png";
