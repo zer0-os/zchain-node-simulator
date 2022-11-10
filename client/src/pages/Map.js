@@ -1,10 +1,8 @@
 import React, { useRef, useEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
-//import MapboxglSpiderifier from "mapboxgl-spiderifier";
 import greenImage from "../assets/mapbox-marker-icon-20px-green.png";
 import grayImage from "../assets/mapbox-marker-icon-20px-red.png";
 import blueImage from "../assets/mapbox-marker-icon-20px-blue.png";
-//import _ from 'lodash';
 
 mapboxgl.accessToken =
   "pk.eyJ1IjoicmF0aWsyMSIsImEiOiJjbGFiZmF5YXMwNDQ2M25wMDQ3dWNlMTJyIn0.iQMyX4lbiYZF6KAoZtSQug";
@@ -36,8 +34,6 @@ const Map = () => {
     const features = [];
     if (records.length) {
       for (const record of records) {
-        //const latitude = record.geoLocation.ll[0];
-        //const longitude = record.geoLocation.ll[1];
         const latitude = record.geoLocation.lat;
         const longitude = record.geoLocation.lon;
 
@@ -165,10 +161,7 @@ const Map = () => {
         center: [12.550343, 55.665957],
         zoom: 1,
       });
-      // let spiderifier = new MapboxglSpiderifier(map, {
-      //   customPin: true
-      // }),
-      // SPIDERFY_FROM_ZOOM = 10;
+
       map.on("load", () => {
         Promise.all(
           [
@@ -223,15 +216,13 @@ const Map = () => {
               //   * Yellow, 30px circles when point count is between 100 and 750
               //   * Pink, 40px circles when point count is greater than or equal to 750
               "circle-color": [
-                'match',
-                ['get', 'status'],
-                'online',
-                '#FBB03B',
-                'offline',
-                '#FBB03B',
-                'inactive',
-                '#FBB03B',
-                '#f28cb1'
+                "step",
+                ["get", "point_count"],
+                "#51bbd6",
+                100,
+                "#f1f075",
+                750,
+                "#f28cb1",
               ],
               "circle-radius": [
                 "step",
@@ -276,29 +267,6 @@ const Map = () => {
               layers: ["clusters"],
             });
             const clusterId = features[0].properties.cluster_id;
-
-            // spiderifier.unspiderfy();
-
-            // if (!features.length) {
-            //   return;
-            // } else if (map.getZoom() < SPIDERFY_FROM_ZOOM) {
-            //   map.easeTo({center: features[0].geometry.coordinates, zoom: map.getZoom() + 2});
-            // } else {
-            //   map.getSource('networks').getClusterLeaves(
-            //     clusterId,
-            //     100,
-            //     0,
-            //     function(err, leafFeatures){
-            //       if (err) {
-            //         return console.error('error while getting leaves of a cluster', err);
-            //       }
-            //       var markers = _.map(leafFeatures, function(leafFeature){
-            //         return leafFeature.properties;
-            //       });
-            //       spiderifier.spiderfy(features[0].geometry.coordinates, markers);
-            //     }
-            //   );
-            // }
 
             map
               .getSource("networks")
