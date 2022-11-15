@@ -1,7 +1,8 @@
-import { spawn } from "child_process";
-import fs from "fs";
-import path from "path";
-import os from 'os'
+
+const { spawn } = require("child_process");
+const fs = require("fs");
+const path = require("path");
+const os = require("os");
 
 
 function getTerminal() {
@@ -65,7 +66,7 @@ async function runNode(keyPairFileName, ipAddress) {
       reject(new Error("script process returned non 0 status"));
     });
   });
-  
+
   return result;
 }
 
