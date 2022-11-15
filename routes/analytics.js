@@ -7,7 +7,7 @@ analyticsRoutes.route("/zchain/analytics").post(async function (req, response) {
     let db_connect = dbo.getDb(process.env.DB_NAME);
 
     const collection = db_connect.collection(process.env.COLLECTION_NAME);
-  
+    
     const sourceIP = req.headers['x-forwarded-for'] ||
       req.socket.remoteAddress ||
       null;
@@ -25,7 +25,8 @@ analyticsRoutes.route("/zchain/analytics").post(async function (req, response) {
           {
             "message": data.message,
             "channel": data.channel,
-            "network": data.network
+            "network": data.network,
+            "timestamp": data.timestamp
           }
         ],
         "peerId": data.peerId,
@@ -46,7 +47,8 @@ analyticsRoutes.route("/zchain/analytics").post(async function (req, response) {
           {
             "message": data.message,
             "channel": data.channel,
-            "network": data.network
+            "network": data.network,
+            "timestamp": data.timestamp
           }
         ],
         "version": data.version,
