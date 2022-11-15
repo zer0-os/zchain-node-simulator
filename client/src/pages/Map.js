@@ -13,12 +13,23 @@ const Map = () => {
 
   const [records, setRecords] = useState([]);
   const [storageTotal, setStorageTotal] = useState(0);
-  const [messagesTotal, setMessagesTotal] = useState(0);
   const [avgNodeStorage, setAvgNodeStorage] = useState(0);
   const [nodesTotal, setNodesTotal] = useState(0);
   const [onlineNodes, setOnlineNodes] = useState(0);
   const [offlineNodes, setOfflineNodes] = useState(0);
   const [inActiveNodes, setInActiveNodes] = useState(0);
+  const [messageMetaData, setMessageMetaData] = useState({
+    last_minute: 0,
+    last_hour: 0,
+    last_day: 0,
+    all_time: 0
+  });
+
+  function numberWithCommas(x) {
+    var parts = x.toString().split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.join(".");
+  }
 
   function getNodeColor(record) {
     switch (record.status) {
@@ -81,7 +92,6 @@ const Map = () => {
     }
     const records = await response.json();
 
-    // console.log("RRRRRR ", records)
     const rec = [];
     const freq = [];
     for (let i = 0; i < records.length; i++) {
@@ -117,20 +127,27 @@ const Map = () => {
       }
     }
 
-
-    let messageTot = 0;
     let storageTot = 0;
     let totalNodes = 0;
     let online = 0;
     let offline = 0;
     let inactive = 0;
 
+    let messages = {
+      last_minute: 0,
+      last_hour: 0,
+      last_day: 0,
+      all_time: 0
+    }
 
     setRecords(rec);
+    const now = Math.floor((new Date()).getTime() / 1000);
+    const lastMin = now - 60;
+    const lastHour = now - (60 * 60);
+    const lastDay = now - (24 * 60 * 60);
     for (const record of rec) {
       console.log(record.status);
       //console.log("lat ", record.geoLocation.lat , "  lon: ", record.geoLocation.lon);
-      messageTot += record.messages?.length ?? 0;
       storageTot += record.storage ?? 0;
       totalNodes += 1;
       if (record.status === "offline") {
@@ -140,14 +157,25 @@ const Map = () => {
       } else {
         online++;
       }
+
+      messages.all_time += record.messages?.length ?? 0;
+      for (const m of record.messages) {
+        const ts = m.timestamp;
+        if (!ts) { continue; }
+
+        if (ts >= lastMin) { messages.last_minute ++; }
+        if (ts >= lastHour) { messages.last_hour ++; }
+        if (ts >= lastDay) { messages.last_day ++; }
+      }
     }
-    setMessagesTotal(messageTot);
+
     setStorageTotal(storageTot);
     setAvgNodeStorage(storageTot / totalNodes);
     setNodesTotal(totalNodes);
     setOnlineNodes(online);
     setOfflineNodes(offline);
     setInActiveNodes(inactive);
+    setMessageMetaData(messages);
     console.log(records);
   }
 
@@ -318,13 +346,22 @@ const Map = () => {
   return (
     <div>
       <div className="sidebarStyle">
-        <div>Total Storage of Network: {storageTotal.toFixed(3)}</div>
-        <div>Total number of messages : {messagesTotal}</div>
-        <div>Average Size of Each Node : {avgNodeStorage.toFixed(3)}</div>
-        <div>Total Nodes:{nodesTotal} </div>
-        <div>Online Nodes:{onlineNodes} </div>
-        <div>Offline Nodes:{offlineNodes}</div>
-        <div>InActive Nodes:{inActiveNodes}</div>
+        <div>Total Storage of Network: {numberWithCommas(storageTotal.toFixed(3))} MB</div>
+        <div>Average Size of Each Node: {numberWithCommas(avgNodeStorage.toFixed(3))} MB</div>
+
+        <br></br>
+        <div>#nodes </div>
+        <div style={{paddingLeft: "10px"}}>  Online: {onlineNodes} </div>
+        <div style={{paddingLeft: "10px"}}>  Offline: {offlineNodes}</div>
+        <div style={{paddingLeft: "10px"}}>  InActive: {inActiveNodes}</div>
+
+        <br></br>
+        <div>#messages </div>
+        <div style={{paddingLeft: "10px"}}>  Last Min: {messageMetaData.last_minute} </div>
+        <div style={{paddingLeft: "10px"}}>  Last Hour: {messageMetaData.last_hour} </div>
+        <div style={{paddingLeft: "10px"}}>  Last Day: {messageMetaData.last_day}</div>
+        <div style={{paddingLeft: "10px"}}>  All Time: {messageMetaData.all_time}</div>
+
       </div>
       <div id="map" className="map-container dark" ref={mapContainerRef} />
     </div>
