@@ -357,10 +357,10 @@ const Map = () => {
 
         <br></br>
         <div>#messages </div>
-        <div style={{paddingLeft: "10px"}}>  Last Min: {messageMetaData.last_minute} </div>
-        <div style={{paddingLeft: "10px"}}>  Last Hour: {messageMetaData.last_hour} </div>
-        <div style={{paddingLeft: "10px"}}>  Last Day: {messageMetaData.last_day}</div>
-        <div style={{paddingLeft: "10px"}}>  All Time: {messageMetaData.all_time}</div>
+        <div style={{paddingLeft: "10px"}}>  Last Min: {numberWithCommas(messageMetaData.last_minute)} </div>
+        <div style={{paddingLeft: "10px"}}>  Last Hour: {numberWithCommas(messageMetaData.last_hour)} </div>
+        <div style={{paddingLeft: "10px"}}>  Last Day: {numberWithCommas(messageMetaData.last_day)}</div>
+        <div style={{paddingLeft: "10px"}}>  All Time: {numberWithCommas(messageMetaData.all_time)}</div>
 
       </div>
       <div id="map" className="map-container dark" ref={mapContainerRef} />
